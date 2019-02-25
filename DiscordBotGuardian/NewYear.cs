@@ -50,8 +50,8 @@ namespace DiscordBotGuardian
                 await CreateRole(Context, "Mod", "Mod", Color.LightOrange, true, 24);
                 await CreateRole(Context, "Team-Lead", "Display", Color.Blue, true, 25);
                 await CreateRole(Context, "Staff", "Mod", Color.Magenta, true, 26);
-                await CreateRole(Context, "Head-Guardian-" + Event + "-" + Year, "Admin", Color.Red, false, 27);
-                await CreateRole(Context, "Head-Guardian", "Admin", Color.Red, true, 28);
+                await CreateRole(Context, "Head-Guardian-" + Event + "-" + Year, "Mod", Color.Red, false, 27);
+                await CreateRole(Context, "Head-Guardian", "Mod", Color.Red, true, 28);
                 await CreateRole(Context, "Admin", "Admin", Color.Purple, true, 29);
             }
             else
@@ -59,8 +59,8 @@ namespace DiscordBotGuardian
                 await CreateRole(Context, "Mod", "Mod", Color.LightOrange, true, Context.Guild.Roles.Count - 6);
                 await CreateRole(Context, "Team-Lead", "Display", Color.Blue, true, Context.Guild.Roles.Count - 5);
                 await CreateRole(Context, "Staff", "Mod", Color.Magenta, true, Context.Guild.Roles.Count - 4);
-                await CreateRole(Context, "Head-Guardian-" + Event + "-" + Year, "Admin", Color.Red, false, Context.Guild.Roles.Count - 3);
-                await CreateRole(Context, "Head-Guardian", "Admin", Color.Red, true, Context.Guild.Roles.Count - 2);
+                await CreateRole(Context, "Head-Guardian-" + Event + "-" + Year, "Mod", Color.Red, false, Context.Guild.Roles.Count - 3);
+                await CreateRole(Context, "Head-Guardian", "Mod", Color.Red, true, Context.Guild.Roles.Count - 2);
                 await CreateRole(Context, "Admin", "Admin", Color.Purple, true, Context.Guild.Roles.Count - 1);
             }
 
@@ -113,7 +113,6 @@ namespace DiscordBotGuardian
             // Global Categories
             await CreateCategory(Context, "Administration", null, 1);
             await CreateCategory(Context, "Global", GuardianEventsStandard, 2);
-            await CreateCategory(Context, "Archive", GuardianEventsStandard, 2);
             GuardianEventsStandard.Remove(new RolePermissions { Role = "Head-Guardian", ChannelPermType = RolePermissions.ChannelPermissions("admin") });
             GuardianEventsStandard.Add(new RolePermissions { Role = "Head-Guardian-" + Event + "-" + Year, ChannelPermType = RolePermissions.ChannelPermissions("admin") });
 
@@ -134,6 +133,10 @@ namespace DiscordBotGuardian
             await CreateCategory(Context, "Store-" + Event + "-" + Year, new List<RolePermissions> { new RolePermissions { Role = "Store-" + Event + "-" + Year, ChannelPermType = RolePermissions.ChannelPermissions("standard") } });
             await CreateCategory(Context, "Tech-" + Event + "-" + Year, new List<RolePermissions> { new RolePermissions { Role = "Tech-" + Event + "-" + Year, ChannelPermType = RolePermissions.ChannelPermissions("standard") } });
             await CreateCategory(Context, "Happy-Hour-" + Event + "-" + Year, new List<RolePermissions> { new RolePermissions { Role = "Happy-Hour-" + Event + "-" + Year, ChannelPermType = RolePermissions.ChannelPermissions("standard") } });
+
+            // Archive
+            IReadOnlyCollection<IGuildChannel> cats = await Context.Guild.GetCategoriesAsync();
+            await CreateCategory(Context, "Archive", GuardianEventsStandard, cats.Count());
 
         }
 
