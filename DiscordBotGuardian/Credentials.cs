@@ -41,6 +41,21 @@
         /// </summary>
         public string BotToken { get; set; }
 
+        /// <summary>
+        /// Stores the OauthTwitter Key
+        /// </summary>
+        public string TwitterOauthKey { get; set; }
+
+        /// <summary>
+        /// Stores the OauthTwitter Secret
+        /// </summary>
+        public string TwitterOauthSecret { get; set; }
+
+        /// <summary>
+        /// Channel it will tweet to
+        /// </summary>
+        public string TweetChannel { get; set; }
+
     }
 
 }

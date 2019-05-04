@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using System.Timers;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -23,6 +24,12 @@ namespace DiscordBotGuardian
         private static MailAddress mailaccount;
         // Holds userdata for the Sheets DB
         private static List<UserData> users = new List<UserData>();
+
+        // Set the Datetime for tweets
+        public static DateTime lastrun = DateTime.UtcNow;
+
+        // Load Creds
+        private static Credentials creds = new Credentials();
 
         // Used for enabling or disabling SMS THIS IS HARD CODED
         public bool SMSDisabled = true;
@@ -52,7 +59,10 @@ namespace DiscordBotGuardian
                     SMTPUsername = "LoginUsername@gmail.com",
                     SpreadSheetID = "SPREADSHEET-ID-URL",
                     SMTPPassword = "EmailPassword",
-                    BotToken = "DiscordBotToken"
+                    BotToken = "DiscordBotToken",
+                    TwitterOauthKey = "0000000000",
+                    TwitterOauthSecret = "0000000",
+                    TweetChannel = "announcments"
                 };
                 File.WriteAllText(curDir + "/botsettings.json", JsonConvert.SerializeObject(tempcreds));
                 // Kick back an exit warning to update creds
@@ -79,7 +89,7 @@ namespace DiscordBotGuardian
             }
             // Assuming everything exists load in the json file
             string credsfile = File.ReadAllText(curDir + "/botsettings.json");
-            Credentials creds = JsonConvert.DeserializeObject<Credentials>(credsfile);
+            creds = JsonConvert.DeserializeObject<Credentials>(credsfile);
             if (SMSDisabled == false)
             {
                 // After parsing, set up the SMTP client for text message
@@ -104,11 +114,47 @@ namespace DiscordBotGuardian
             // Tokens should be considered secret data, and never hard-coded.
             await _client.LoginAsync(TokenType.Bot, creds.BotToken);
             await _client.StartAsync();
+            Timer TwitterTimer = new Timer();
+            TwitterTimer.Elapsed += new ElapsedEventHandler(SendTweetAsync);
+            TwitterTimer.Interval = 15000;
+            TwitterTimer.Enabled = true;
+
 
             // Block the program until it is closed.
             await Task.Delay(-1);
         }
-
+        private async void SendTweetAsync(object source, ElapsedEventArgs e)
+        {
+            var twitter = new Twitter
+            {
+                OAuthConsumerKey = creds.TwitterOauthKey,
+                OAuthConsumerSecret = creds.TwitterOauthSecret
+            };
+            ulong channelid = new ulong();
+            foreach (var channelparser in _client.GetGuild(405513567681642517).TextChannels)
+            {
+                if (channelparser.Name.Trim().ToLower() == creds.TweetChannel.Trim().ToLower())
+                {
+                    channelid = channelparser.Id;
+                    break;
+                }
+            }
+            List<Tweet> twitts = twitter.GetTwitts("guardianwire", 15).Result;
+            foreach (var t in twitts)
+            {
+                if (lastrun <= t.created_at)
+                {
+                    // Guardian ID 405513567681642517
+                    // Bot Test 486327167035244554
+                    await _client.GetGuild(405513567681642517).GetTextChannel(channelid).SendMessageAsync(t.text);
+                    if(t.media != null)
+                    {
+                        await _client.GetGuild(405513567681642517).GetTextChannel(channelid).SendMessageAsync(t.media);
+                    }
+                }
+            }
+            lastrun = DateTime.UtcNow;
+        }
         /// <summary>
         /// Write log messages to the console
         /// </summary>
@@ -138,6 +184,11 @@ namespace DiscordBotGuardian
             await Task.Run(() => ReadmessagesAsync(message));
   
         }
+        private async void Promptmessage(string message)
+        {
+            await _client.GetGuild(405513567681642517).GetTextChannel(538474532755734543).SendMessageAsync(message);
+        }
+
         public async void ReadmessagesAsync(SocketMessage message)
         {          
             // Set up the Socket User Message so we can use it for context for later
@@ -146,6 +197,10 @@ namespace DiscordBotGuardian
             if (usermessage == null) return;
             if (message.Content.Length > 0)
             {
+                if (message.Channel.Name == "@Killklli#8052")
+                {
+                    Promptmessage(message.Content);
+                }
                 // Log Everything
                 WriteLog(message.Channel + ": " + message.Author + " - " + message.Content);
                 // Check if the message is a command based off if a bang is the first letter
