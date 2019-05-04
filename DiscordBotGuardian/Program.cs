@@ -139,19 +139,29 @@ namespace DiscordBotGuardian
                     break;
                 }
             }
-            List<Tweet> twitts = twitter.GetTwitts("guardianwire", 15).Result;
+            List<Tweet> twitts = twitter.GetTwitts("killklli", 15).Result;
+
+            bool tweeted = false;
             foreach (var t in twitts)
             {
-                if (lastrun <= t.created_at)
+                if (lastrun.AddHours(-1) <= t.created_at)
                 {
                     // Guardian ID 405513567681642517
                     // Bot Test 486327167035244554
-                    await _client.GetGuild(405513567681642517).GetTextChannel(channelid).SendMessageAsync(t.text);
+                    if (t.text != String.Empty)
+                    {
+                        await _client.GetGuild(405513567681642517).GetTextChannel(channelid).SendMessageAsync(t.text);
+                    }
                     if(t.media != null)
                     {
                         await _client.GetGuild(405513567681642517).GetTextChannel(channelid).SendMessageAsync(t.media);
                     }
+                    tweeted = true;
                 }
+            }
+            if(tweeted == true)
+            {
+                await _client.GetGuild(405513567681642517).GetTextChannel(channelid).SendMessageAsync("@everyone");
             }
             lastrun = DateTime.UtcNow;
         }

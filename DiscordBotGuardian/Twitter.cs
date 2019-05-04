@@ -38,17 +38,19 @@ namespace DiscordBotGuardian
             {
                 Tweet combine = new Tweet
                 {
-                    created_at = DateTime.ParseExact(t["created_at"], "ddd MMM dd HH:mm:ss +0000 yyyy", null)
+                    created_at = DateTime.ParseExact(t["created_at"].ToString(), "ddd MMM dd HH:mm:ss K yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal)
                 };
-                if (t["full_text"].Contains("https://t.co/"))
+                if (t["full_text"].ToString().Contains("https://t.co/"))
                 {
-                    combine.text = t["full_text"].Remove(t["full_text"].IndexOf("https://t.co/"));
+                    combine.text = t["full_text"].ToString().Remove(t["full_text"].ToString().IndexOf("https://t.co/"));
                 }
                 else
                 {
-                    combine.text = t["full_text"];
+                    combine.text = t["full_text"].ToString();
                 }
-                foreach (var entity in t["entities"])
+                try
+                {
+                    foreach (var entity in t["entities"])
                     {
                         if (entity.Name == "media")
                         {
@@ -64,6 +66,8 @@ namespace DiscordBotGuardian
                             }
                         }
                     }
+                }
+                catch { combine.media = null; }
                 list.Add(combine);
             }
             list.Reverse();
