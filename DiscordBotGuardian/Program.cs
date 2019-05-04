@@ -116,7 +116,7 @@ namespace DiscordBotGuardian
             await _client.StartAsync();
             Timer TwitterTimer = new Timer();
             TwitterTimer.Elapsed += new ElapsedEventHandler(SendTweetAsync);
-            TwitterTimer.Interval = 15000;
+            TwitterTimer.Interval = 10000;
             TwitterTimer.Enabled = true;
 
 
