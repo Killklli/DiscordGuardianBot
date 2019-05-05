@@ -127,45 +127,49 @@ namespace DiscordBotGuardian
         }
         private async void SendTweetAsync(object source, ElapsedEventArgs e)
         {
-            var twitter = new Twitter
+            try
             {
-                OAuthConsumerKey = creds.TwitterOauthKey,
-                OAuthConsumerSecret = creds.TwitterOauthSecret
-            };
-            ulong channelid = new ulong();
-            foreach (var channelparser in _client.GetGuild(405513567681642517).TextChannels)
-            {
-                if (channelparser.Name.Trim().ToLower() == creds.TweetChannel.Trim().ToLower())
+                var twitter = new Twitter
                 {
-                    channelid = channelparser.Id;
-                    break;
+                    OAuthConsumerKey = creds.TwitterOauthKey,
+                    OAuthConsumerSecret = creds.TwitterOauthSecret
+                };
+                ulong channelid = new ulong();
+                foreach (var channelparser in _client.GetGuild(405513567681642517).TextChannels)
+                {
+                    if (channelparser.Name.Trim().ToLower() == creds.TweetChannel.Trim().ToLower())
+                    {
+                        channelid = channelparser.Id;
+                        break;
+                    }
                 }
-            }
-            List<Tweet> twitts = twitter.GetTwitts("killklli", 15).Result;
+                List<Tweet> twitts = twitter.GetTwitts("guardianwire", 15).Result;
 
-            bool tweeted = false;
-            foreach (var t in twitts)
-            {
-                if (lastrun.AddHours(-1) <= t.created_at)
+                bool tweeted = false;
+                foreach (var t in twitts)
                 {
-                    // Guardian ID 405513567681642517
-                    // Bot Test 486327167035244554
-                    if (t.text != String.Empty)
+                    if (lastrun <= t.created_at)
                     {
-                        await _client.GetGuild(405513567681642517).GetTextChannel(channelid).SendMessageAsync(t.text);
+                        // Guardian ID 405513567681642517
+                        // Bot Test 486327167035244554
+                        if (t.text != String.Empty)
+                        {
+                            await _client.GetGuild(405513567681642517).GetTextChannel(channelid).SendMessageAsync(t.text);
+                        }
+                        if (t.media != null)
+                        {
+                            await _client.GetGuild(405513567681642517).GetTextChannel(channelid).SendMessageAsync(t.media);
+                        }
+                        tweeted = true;
                     }
-                    if(t.media != null)
-                    {
-                        await _client.GetGuild(405513567681642517).GetTextChannel(channelid).SendMessageAsync(t.media);
-                    }
-                    tweeted = true;
                 }
+                if (tweeted == true)
+                {
+                    await _client.GetGuild(405513567681642517).GetTextChannel(channelid).SendMessageAsync("@everyone");
+                }
+                lastrun = DateTime.UtcNow;
             }
-            if(tweeted == true)
-            {
-                await _client.GetGuild(405513567681642517).GetTextChannel(channelid).SendMessageAsync("@everyone");
-            }
-            lastrun = DateTime.UtcNow;
+            catch { }
         }
         /// <summary>
         /// Write log messages to the console
