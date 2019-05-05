@@ -189,12 +189,14 @@ namespace DiscordBotGuardian
                                     await Task.Delay(1000);
                                     users = Database.UpdateUser(message.Author.Id.ToString().ToLower(), "Authenticated", "TRUE", users);
                                     found = true;
+                                    break;
                                 }
                                 else
                                 {
                                     // Actually assign the new role
                                     await SentDiscordCommands.RoleTask(context, "Guardian-London-18");
                                     found = true;
+                                    break;
                                 }
 
                             }
