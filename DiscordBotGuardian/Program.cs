@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
+using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using Discord;
@@ -114,11 +115,12 @@ namespace DiscordBotGuardian
             // Tokens should be considered secret data, and never hard-coded.
             await _client.LoginAsync(TokenType.Bot, creds.BotToken);
             await _client.StartAsync();
+
+
             Timer TwitterTimer = new Timer();
             TwitterTimer.Elapsed += new ElapsedEventHandler(SendTweetAsync);
             TwitterTimer.Interval = 10000;
             TwitterTimer.Enabled = true;
-
 
             // Block the program until it is closed.
             await Task.Delay(-1);

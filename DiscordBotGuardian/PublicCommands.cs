@@ -169,6 +169,47 @@ namespace DiscordBotGuardian
                     return true;
                 }
             }
+            else if (splitmessage[0].ToLower() == "!rtxlondon" && message.Channel.Name == "landing")
+            {
+                bool found = false;
+                foreach(UserData user in users)
+                {
+                    if(message.Author.Id.ToString() == user.DiscordUsername)
+                    {
+                        foreach (string events in user.Event)
+                        {
+                            if (events.ToLower() == "london-18")
+                            {
+                                if (user.Authenticated == false)
+                                {
+                                    // Actually assign the new role
+                                    await SentDiscordCommands.RoleTask(context, "Guardian-London-18");
+                                    // Remove the event from the Users info and only store it in the roles param
+                                    users = Database.UpdateUser(message.Author.Id.ToString().ToLower(), "Event", "", users, null);
+                                    await Task.Delay(1000);
+                                    users = Database.UpdateUser(message.Author.Id.ToString().ToLower(), "Authenticated", "TRUE", users);
+                                    found = true;
+                                }
+                                else
+                                {
+                                    // Actually assign the new role
+                                    await SentDiscordCommands.RoleTask(context, "Guardian-London-18");
+                                    found = true;
+                                }
+
+                            }
+                        }
+                    }
+                }
+                if(found == true)
+                {
+                    await message.Channel.SendMessageAsync(message.Author.Mention + " Your Discord user has now been authenticated as a Guardian and accepted the TOS");
+                }
+                else
+                {
+                    await message.Channel.SendMessageAsync(message.Author.Mention + " You are not an RTXL 18 user or you have already been given the role");
+                }
+            }
             // Check if its a help message
             else if (splitmessage[0].ToLower() == "!help")
             {
