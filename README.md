@@ -1,6 +1,6 @@
 <br />
 <p align="center">
-  <h3 align="center">Discord RTX Guardian Bot</h3>
+  <h1 align="center">Discord RTX Guardian Bot</h3>
 
   <p align="center">
     This bot was made for managing and authenticating users in the RTX Guardian discord
