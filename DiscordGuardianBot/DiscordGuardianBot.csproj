@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <StartupObject>DiscordGuardianBot.Program</StartupObject>
+    <AssemblyName>DiscordGuardianBot</AssemblyName>
+    <RootNamespace>DiscordGuardianBot</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Discord.Net.Core\**" />
+    <Compile Remove="modules\**" />
+    <EmbeddedResource Remove="Discord.Net.Core\**" />
+    <EmbeddedResource Remove="modules\**" />
+    <None Remove="Discord.Net.Core\**" />
+    <None Remove="modules\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AIMLBot" Version="2.0.0" />
+    <PackageReference Include="Discord.Net" Version="2.1.1" />
+    <PackageReference Include="Google.Apis" Version="1.42.0" />
+    <PackageReference Include="Google.Apis.Docs.v1" Version="1.42.0.1797" />
+    <PackageReference Include="Google.Apis.Sheets.v4" Version="1.42.0.1791" />
+    <PackageReference Include="LiteDB" Version="4.1.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Interactive.Async" Version="3.2.0" />
+    <PackageReference Include="TweetMoaSharp" Version="6.0.0" />
+    <PackageReference Include="Victoria" Version="5.1.0" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>modules\Discord.Net.WebSocket\bin\Debug\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>modules\Discord.Net.WebSocket\bin\Debug\net46\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+	
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+
+</Project>

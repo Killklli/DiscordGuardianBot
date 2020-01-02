@@ -216,9 +216,5 @@ project.lock.json
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
-DiscordBotGuardian/botsettings.json
-DiscordBotGuardian/sms.json
-DiscordBotGuardian/token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user
-DiscordBotGuardian/credentials.json
 DiscordBotGuardian/bin/*
-DiscordBotGuardian/log*
+DiscordBotGuardian/LavaLink/logs/*
