@@ -10,8 +10,6 @@
   <p align="center">
     This bot was made for managing and authenticating users in the RTX Guardian discord
     <br />
-    <a href="https://github.com/Killklli/DiscordGuardianBot"><strong>Explore the docs »</strong></a>
-    <br />
     <a href="https://github.com/Killklli/DiscordGuardianBot/issues">Report Bug</a>
     ·
     <a href="https://github.com/Killklli/DiscordGuardianBot/issues">Request Feature</a>
