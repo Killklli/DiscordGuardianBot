@@ -276,7 +276,10 @@ namespace DiscordGuardianBot
                                                     {
                                                         if(per.Id == person.Id)
                                                         {
-                                                            found = true;
+                                                            if(per.GetPermissions(channel).SendMessages == true)
+                                                            {
+                                                                found = true;
+                                                            }
                                                         }
                                                     }
                                                     username = person.Nickname;
