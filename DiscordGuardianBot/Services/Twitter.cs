@@ -77,7 +77,9 @@ namespace DiscordGuardianBot
                     tweetchannel = config.TweetChannel;
                     everyonetag = config.Everyonetag;
                 }
-                foreach (var channelparser in Client.GetGuild(486327167035244554).TextChannels)
+                // Guardian ID 405513567681642517
+                // Bot Test 486327167035244554
+                foreach (var channelparser in Client.GetGuild(405513567681642517).TextChannels)
                 {
                     if (channelparser.Name.Trim().ToLower() == tweetchannel.ToLower().Trim())
                     {
@@ -92,8 +94,6 @@ namespace DiscordGuardianBot
                 {
                     if (Lastrun <= t.created_at)
                     {
-                        // Guardian ID 405513567681642517
-                        // Bot Test 486327167035244554
                         if (t.text != String.Empty)
                         {
                             await Client.GetGuild(405513567681642517).GetTextChannel(channelid).SendMessageAsync(t.text);
