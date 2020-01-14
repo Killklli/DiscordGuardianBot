@@ -63,7 +63,15 @@ namespace DiscordGuardianBot
                 var Guardians = db.GetCollection<UserData>("Guardians");
                 foreach (UserData user in users)
                 {
-                    UserData Guardian = Guardians.FindOne(x => x.DiscordUsername.ToLower().StartsWith(user.DiscordUsername.ToLower()));
+                    UserData Guardian = null;
+                    foreach (var Guard in Guardians.FindAll())
+                    {
+                        if (Guard.DiscordUsername.ToLower().Trim().Contains(user.DiscordUsername.ToLower().Trim()))
+                        {
+                            Guardian = Guard;
+                            break;
+                        }
+                    }
                     if (Guardian != null)
                     {
                         Guardian.Team = user.Team;
@@ -270,7 +278,7 @@ namespace DiscordGuardianBot
                                             bool found = false;
                                             foreach (var person in discordclient.GetGuild(405513567681642517).Users)
                                             {
-                                                if (person.Username.ToLower() + "#" + person.DiscriminatorValue.ToString() == Guardian.DiscordUsername.ToLower())
+                                                if (person.Username.ToLower() + "#" + person.Discriminator.ToString() == Guardian.DiscordUsername.ToLower())
                                                 {
                                                     foreach(var per in channel.Users)
                                                     {
@@ -414,7 +422,7 @@ namespace DiscordGuardianBot
                                     var Guardian = Guardians.Find(x => x.GroupMeGroup != null && x.Channels.Contains(message.Channel.Name.ToLower()) && x.GroupMeTime == null);
                                     foreach (var notify in Guardian)
                                     {
-                                        if (notify.DiscordUsername.ToLower() != message.Author.Username.ToLower() + "#" + message.Author.DiscriminatorValue.ToString())
+                                        if (notify.DiscordUsername.ToLower() != message.Author.Username.ToLower() + "#" + message.Author.Discriminator.ToString())
                                         {
                                             GroupMe.SendMessage(notify.GroupMeBot, message.Channel.Name, message.Author.Username, message.Content, creds.GroupMe);
                                         }

@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
 using LiteDB;
+using System;
 
 namespace DiscordGuardianBot.Commands
 {
@@ -15,7 +16,6 @@ namespace DiscordGuardianBot.Commands
             }
             else if (Validation.CheckCommand(message, "guardian"))
             {
-                bool throwerror = false;
                 // Open database (or create if not exits)
                 using (var db = new LiteDatabase(@"Events.db"))
                 {
@@ -23,7 +23,15 @@ namespace DiscordGuardianBot.Commands
                     using (var guardiandb = new LiteDatabase(@"Guardians.db"))
                     {
                         var Guardians = guardiandb.GetCollection<UserData>("Guardians");
-                        var Guardian = Guardians.FindOne(x => x.DiscordUsername.ToLower().StartsWith(message.Author.Username.ToLower() + "#" + message.Author.DiscriminatorValue));
+                        UserData Guardian = null;
+                        foreach (var Guard in Guardians.FindAll())
+                        {
+                            if (Guard.DiscordUsername.ToLower().Trim().Contains(message.Author.Username.ToLower() + "#" + message.Author.Discriminator))
+                            {
+                                Guardian = Guard;
+                                break;
+                            }
+                        }
                         if (Guardian != null && Events != null)
                         {
                             if (Events.Count() != 0)
@@ -35,25 +43,9 @@ namespace DiscordGuardianBot.Commands
                                     Guardian.Authenticated = true;
                                     Guardians.Update(Guardian);
                                 }
-                                else
-                                {
-                                    throwerror = true;
-                                }
                             }
-                            else
-                            {
-                                throwerror = true;
-                            }
-                        }
-                        else
-                        {
-                            throwerror = true;
                         }
                     }
-                }
-                if (throwerror == true)
-                {
-                    await DiscordFunctions.DeleteSpecificMessage(message);
                 }
                 return true;
             }

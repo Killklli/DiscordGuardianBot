@@ -21,12 +21,12 @@ namespace DiscordGuardianBot.Commands
                     string credsfile = File.ReadAllText(curDir + "/botsettings.json");
                     Config creds = JsonConvert.DeserializeObject<Config>(credsfile);
                     var Guardians = db.GetCollection<UserData>("Guardians");
-                    UserData Guardian = Guardians.FindOne(x => x.DiscordUsername.ToLower().StartsWith(message.Author.Username.ToLower() + "#" + message.Author.DiscriminatorValue.ToString()));
+                    UserData Guardian = Guardians.FindOne(x => x.DiscordUsername.ToLower().StartsWith(message.Author.Username.ToLower() + "#" + message.Author.Discriminator.ToString()));
                     if (Guardian != null)
                     {
                         if (Guardian.GroupMeGroup == null)
                         {
-                            var result = GroupMe.CreateGroup(message.Author.Username + "#" + message.Author.DiscriminatorValue.ToString(), creds.GroupMe);
+                            var result = GroupMe.CreateGroup(message.Author.Username + "#" + message.Author.Discriminator.ToString(), creds.GroupMe);
                             Guardian.GroupMeGroup = result.Item3;
                             Guardian.GroupMeTime = DateTime.Now.ToString();
                             Guardian.Channels = new List<string>() { "announcements", "announcements-" + Guardian.Event };
@@ -57,7 +57,7 @@ namespace DiscordGuardianBot.Commands
                 using (var db = new LiteDatabase(@"Guardians.db"))
                 {
                     var Guardians = db.GetCollection<UserData>("Guardians");
-                    UserData Guardian = Guardians.FindOne(x => x.DiscordUsername.ToLower().StartsWith(message.Author.Username.ToLower() + "#" + message.Author.DiscriminatorValue.ToString()));
+                    UserData Guardian = Guardians.FindOne(x => x.DiscordUsername.ToLower().StartsWith(message.Author.Username.ToLower() + "#" + message.Author.Discriminator.ToString()));
                     if (Guardian != null)
                     {
                         if (Guardian.GroupMeGroup != null)

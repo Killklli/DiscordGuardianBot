@@ -90,6 +90,7 @@ namespace DiscordGuardianBot.Commands
             adminHelp.AddField("Deleteevent <event> <year>", "Deletes a previous years event specific info and saves the bar");
             adminHelp.AddField("Points <add/delete/modify> <pointset> <number>", "Allows you to manage points (Add creates a new set, Delete removes a set, modify changes points), pointset and number are only used for modify");
             adminHelp.AddField("Unauthenticated", "Prints out the list of users that have not authenticated for the event");
+            adminHelp.AddField("ClearDB", "Clears the DB of unauthenticated users, suggest doing a reload after");
 
             adminHelp.WithFooter("Page 5/5");
 

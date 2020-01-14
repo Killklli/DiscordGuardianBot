@@ -40,10 +40,18 @@ namespace DiscordGuardianBot
                 using (var db = new LiteDatabase(@"Guardians.db"))
                 {
                     var Guardians = db.GetCollection<UserData>("Guardians");
-                    var Guardian = Guardians.FindOne(x => x.DiscordUsername.ToLower().StartsWith(message.Author.Username.ToLower() + "#" + message.Author.DiscriminatorValue.ToString()));
+                    UserData Guardian = null;
+                    foreach (var Guard in Guardians.FindAll())
+                    {
+                        if (Guard.DiscordUsername.ToLower().Trim().Contains(message.Author.Username.ToLower() + "#" + message.Author.Discriminator.ToString().ToLower()))
+                        {
+                            Guardian = Guard;
+                            break;
+                        }
+                    }
                     if (Guardian != null)
                     {
-                        if (Guardian.DiscordUsername.ToLower() == message.Author.Username.ToLower() + "#" + message.Author.DiscriminatorValue.ToString())
+                        if (Guardian.DiscordUsername.ToLower() == message.Author.Username.ToLower() + "#" + message.Author.Discriminator.ToString())
                         {
                             Guardians.Update(Guardian);
                             await DiscordFunctions.RoleTask(context, "Guardian-" + Guardian.Event, message.Author.Id.ToString());
@@ -59,7 +67,7 @@ namespace DiscordGuardianBot
             }
             else
             {
-                await message.Channel.SendMessageAsync(message.Author.Mention + " You are not registered as a Guardian if you think this is a mistake please contact an @Admin");
+                await message.Channel.SendMessageAsync(message.Author.Mention + " You are not a Guardian if you think this is a mistake please contact an @Admin");
             }
         }
     }

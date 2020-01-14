@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using LiteDB;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -215,7 +216,7 @@ namespace DiscordGuardianBot.Commands
                     Console.WriteLine("-----------------Guardians-------------------");
                     foreach (UserData user in results)
                     {
-                        Console.WriteLine(user.Id + " " + user.DiscordUsername + " " + user.Team + " " + user.Event + " " + user.GroupMeGroup + " " + user.GroupMeTime + " " + string.Join(",", user.Channels.ToArray()));
+                        Console.WriteLine(user.Id + " " + user.DiscordUsername + " " + user.Team + " " + user.Event + " " + user.GroupMeGroup + " " + user.GroupMeTime);
                     }
                 }
                 using (var db = new LiteDatabase(@"Events.db"))
@@ -236,11 +237,19 @@ namespace DiscordGuardianBot.Commands
                 List<UserData> users = GoogleData.ReadDB();
                 using (var db = new LiteDatabase(@"Guardians.db"))
                 {
-                    string errorlist = "";
                     var Guardians = db.GetCollection<UserData>("Guardians");
+                    List<string> ErrorList = new List<string>();
                     foreach (UserData user in users)
                     {
-                        UserData Guardian = Guardians.FindOne(x => x.DiscordUsername.ToLower().StartsWith(user.DiscordUsername.ToLower()));
+                        UserData Guardian = null;
+                        foreach (var Guard in Guardians.FindAll())
+                        {
+                            if(Guard.DiscordUsername.ToLower().Trim().Contains(user.DiscordUsername.ToLower().Trim()))
+                            {
+                                Guardian = Guard;
+                                break;
+                            }
+                        }
                         if (Guardian != null)
                         {
                             Guardian.Team = user.Team;
@@ -267,18 +276,23 @@ namespace DiscordGuardianBot.Commands
                                         Guardians.Insert(Guardian);
                                     }
                                 }
-                                catch { errorlist = errorlist + user.DiscordUsername + "\n"; }
+                                catch {
+                                    ErrorList.Add(user.DiscordUsername);
+                                }
                             }
                             else
                             {
-                                errorlist = errorlist + user.DiscordUsername + "\n";
+                                ErrorList.Add(user.DiscordUsername);
                             }
                         }
 
                     }
-                    if (errorlist != "")
+                    if (ErrorList.Count != 0)
                     {
-                        DiscordFunctions.EmbedThis("Users have Errors", "`" + errorlist.Substring(1) + "`", "orange", context);
+                        string csv = String.Join(",\n", ErrorList.Select(x => x.ToString()).ToArray());
+                        System.IO.File.WriteAllText("/opt/files/ErrorUsers.csv", csv);
+                        await message.Channel.SendFileAsync("/opt/files/ErrorUsers.csv", "Users with Errors");
+                        System.IO.File.Delete("/opt/files/ErrorUsers.csv");
                     }
                     // Index document using a document property
                     Guardians.EnsureIndex(x => x.DiscordUsername);
@@ -304,7 +318,7 @@ namespace DiscordGuardianBot.Commands
                                 Console.WriteLine(Guardian.DiscordUsername);
                                 foreach (var user in await context.Guild.GetUsersAsync())
                                 {
-                                    if (user.Username.ToLower() + "#" + user.DiscriminatorValue.ToString() == Guardian.DiscordUsername.ToLower())
+                                    if (user.Username.ToLower() + "#" + user.Discriminator.ToString() == Guardian.DiscordUsername.ToLower())
                                     {
                                         if (user.RoleIds.Count == 2)
                                         {
@@ -382,20 +396,40 @@ namespace DiscordGuardianBot.Commands
                 }
                 return true;
             }
+            else if (Validation.CheckCommand(message, "cleardb"))
+            {
+                using (var db = new LiteDatabase(@"Guardians.db"))
+                {
+                    var Guardians = db.GetCollection<UserData>("Guardians");
+                    foreach (var Guardian in Guardians.FindAll())
+                    {
+                        if (Guardian.Authenticated == false)
+                        {
+                            Guardians.Delete(Guardian.Id);
+                        }
+                    }
+                }
+                DiscordFunctions.EmbedThis("Users Removed", "", "orange", context);
+                return true;
+            }
             else if (Validation.CheckCommand(message, "unauthenticated"))
             {
                 using (var db = new LiteDatabase(@"Guardians.db"))
                 {
                     var Guardians = db.GetCollection<UserData>("Guardians");
-                    string list = "";
-                    foreach (var Guardian in Guardians.FindAll())
+                    List<string> UnauthenticatedList = new List<string>();
+                    var Guardianlist = Guardians.FindAll();
+                    foreach (var Guardian in Guardianlist)
                     {
                         if (Guardian.Authenticated == false)
                         {
-                            list = list + Guardian.DiscordUsername + "\n";
+                            UnauthenticatedList.Add(Guardian.DiscordUsername);
                         }
                     }
-                    DiscordFunctions.EmbedThis("Unauthenticated Users", "```" + list + "```", "orange", context);
+                    string csv = String.Join(",\n", UnauthenticatedList.Select(x => x.ToString()).ToArray());
+                    System.IO.File.WriteAllText("/opt/files/unauth.csv", csv);
+                    await message.Channel.SendFileAsync("/opt/files/unauth.csv", "Unauthenticated users");
+                    System.IO.File.Delete("/opt/files/unauth.csv");
                 }
                 return true;
             }
