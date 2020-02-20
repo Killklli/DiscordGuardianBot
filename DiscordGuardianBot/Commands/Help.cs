@@ -29,6 +29,7 @@ namespace DiscordGuardianBot.Commands
             generalHelp.AddField("XKCD", "Returns you a random XKCD comic");
             generalHelp.AddField("SMS", "Enables or Disables SMS notifications");
             generalHelp.AddField("Notify <channel>", "Enables notifications for a specific channel (No entry will set it to the channel you are in)");
+            generalHelp.AddField("WhoAmI", "Replies with your full discord ID");
             generalHelp.WithFooter("Page 1/5");
 
             generalHelp.WithThumbnailUrl("https://i.imgur.com/FmAdIKq.png");
