@@ -120,6 +120,7 @@ namespace DiscordGuardianBot
             _services = ConfigureServices();
             discordclient = _services.GetRequiredService<DiscordSocketClient>();
             discordclient.Log += LogAsync;
+            discordclient.MessageUpdated += MessageEditedAsync;
             discordclient.Ready += Ready;
             discordclient.MessageReceived += MessageReceivedAsync;
 
@@ -468,6 +469,18 @@ namespace DiscordGuardianBot
             if (message.Author.Id == discordclient.CurrentUser.Id)
                 return;
             await Task.Run(() => ReadmessagesAsync(message));
+
+        }
+        /// <summary>
+        /// Thread entry where the messages from Discord are passed under
+        /// </summary>
+        private async Task MessageEditedAsync(Cacheable<IMessage, ulong> beforemessage, SocketMessage aftermessage, ISocketMessageChannel channel)
+        {
+            // The bot should never respond to itself.
+            if (aftermessage.Author.Id == discordclient.CurrentUser.Id)
+                return;
+            var task = Task.Run(() => WriteLog(channel.Name + ": MESSAGE EDITED: " + aftermessage.Author + " - NEW CONTENT: " + aftermessage.Content));
+            await task;
 
         }
         /// <summary>

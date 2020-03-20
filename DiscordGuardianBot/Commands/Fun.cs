@@ -144,6 +144,11 @@ namespace DiscordGuardianBot.Commands
                 DiscordFunctions.EmbedThis("Pong", "Status: " + client.Status + "\nResponse Time: " + client.Latency + "ms", "", context);
                 return true;
             }
+            else if (Validation.CheckCommand(message, "nihilism"))
+            {
+                await context.Channel.SendMessageAsync(context.User.Mention + $" You get nothing");
+                return true;
+            }
             else if (Validation.CheckCommand(message, "whoami"))
             {
                 await context.Channel.SendMessageAsync(context.User.Mention + $" You are: " + message.Author.Username + "#" + message.Author.Discriminator.ToString());
