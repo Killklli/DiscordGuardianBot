@@ -25,12 +25,12 @@ namespace DiscordGuardianBot.Commands
             generalHelp.AddField("Nuggets <x>", "Allows you to convert $ to chicken nuggets");
             generalHelp.AddField("Points", "Shows the current point standings");
             generalHelp.AddField("Ficus", "Praise be the ficus");
-            generalHelp.AddField("Gif <string>", "Returns you a random gif from giphy");
             generalHelp.AddField("XKCD", "Returns you a random XKCD comic");
             generalHelp.AddField("SMS", "Enables or Disables SMS notifications");
             generalHelp.AddField("Notify <channel>", "Enables notifications for a specific channel (No entry will set it to the channel you are in)");
             generalHelp.AddField("WhoAmI", "Replies with your full discord ID");
             generalHelp.AddField("Nihilism", "You get nothing");
+            generalHelp.AddField("CatFact", "Subscribes you to catfacts");
             generalHelp.WithFooter("Page 1/5");
 
             generalHelp.WithThumbnailUrl("https://i.imgur.com/FmAdIKq.png");

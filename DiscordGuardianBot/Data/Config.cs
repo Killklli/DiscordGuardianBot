@@ -46,7 +46,6 @@
         public string TwitterAccessSecret { get; set; }
 
         public string GroupMe { get; set; }
-        public string Giphy { get; set; }
 
     }
 

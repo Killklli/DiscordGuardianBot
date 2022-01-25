@@ -244,7 +244,7 @@ namespace DiscordGuardianBot.Commands
                         UserData Guardian = null;
                         foreach (var Guard in Guardians.FindAll())
                         {
-                            if(Guard.DiscordUsername.ToLower().Trim().Contains(user.DiscordUsername.ToLower().Trim()))
+                            if (Guard.DiscordUsername.ToLower().Trim().Contains(user.DiscordUsername.ToLower().Trim()))
                             {
                                 Guardian = Guard;
                                 break;
@@ -276,7 +276,8 @@ namespace DiscordGuardianBot.Commands
                                         Guardians.Insert(Guardian);
                                     }
                                 }
-                                catch {
+                                catch
+                                {
                                     ErrorList.Add(user.DiscordUsername);
                                 }
                             }
@@ -337,6 +338,35 @@ namespace DiscordGuardianBot.Commands
                                                 }
                                             }
 
+                                        }
+                                        else
+                                        {
+                                            List<string> eventroles = new List<string>();
+                                            foreach (var role in user.Guild.Roles)
+                                            {
+                                                if (user.Guild.EveryoneRole != role && user.RoleIds.Contains(role.Id))
+                                                {
+                                                    if (role.Name.ToLower().Contains("guardian-austin-"))
+                                                    {
+                                                        eventroles.Add(role.Name);
+                                                    }
+                                                }
+                                            }
+                                            List<int> eventnumber = new List<int>();
+                                            foreach (string role in eventroles)
+                                            {
+                                                eventnumber.Add(Int32.Parse(role.ToLower().Replace("guardian-austin-", "")));
+                                            }
+                                            foreach (var role in user.Guild.Roles)
+                                            {
+                                                if (user.Guild.EveryoneRole != role && user.RoleIds.Contains(role.Id))
+                                                {
+                                                    if (role.Name.ToLower() == "guardian-austin-" + eventnumber.Max().ToString())
+                                                    {
+                                                        await user.RemoveRoleAsync(role);
+                                                    }
+                                                }
+                                            }
                                         }
                                         DiscordFunctions.EmbedThis("Users Removed", "Please remember to remove the user from the sheet", "orange", context);
                                         found = true;

@@ -107,6 +107,17 @@ namespace DiscordGuardianBot.Commands
                 }
                 return true;
             }
+            else if (Validation.CheckCommand(message, "catfact"))
+            {
+                using (var webclient = new HttpClient())
+                {
+                    webclient.Timeout = TimeSpan.FromSeconds(2);
+                    var s = await webclient.GetStringAsync("https://catfact.ninja/fact");
+                    var json = JsonConvert.DeserializeObject<CatFact>(s);
+                    await context.Channel.SendMessageAsync(json.Fact);
+                }
+                return true;
+            }
             else if (Validation.CheckCommand(message, "dog"))
             {
                 using (var webclient = new HttpClient())
@@ -216,39 +227,6 @@ namespace DiscordGuardianBot.Commands
                 }
                 await context.Channel.SendMessageAsync(context.User.Mention + $" 🤔 I would rate that a " + random.ToString() + "/10");
                 return true;
-            }
-            else if (Validation.CheckCommand(message, "gif"))
-            {
-                string giphyUrl = $"http://api.giphy.com/v1/gifs/";
-                string curDir = Directory.GetCurrentDirectory();
-                // Assuming everything exists load in the json file
-                string credsfile = File.ReadAllText(curDir + "/botsettings.json");
-                Config creds = JsonConvert.DeserializeObject<Config>(credsfile);
-                string key = $"api_key=" + creds.Giphy;
-                try
-                {
-                    if (Validation.WordCountGreater(message, 1))
-                    {
-                        Uri uri = new Uri($"{giphyUrl}search?q={message.Content.Replace(DiscordFunctions.GetWord(message, 1), "").Trim().Replace(" ", "+")}&rating=pg-13&{key}");
-                        var response = await new ApiHandler<GiphySearchResult>().GetJSONAsync(uri);
-                        if (response != null)
-                        {
-                            await context.Channel.SendMessageAsync(response.Data.Any() ? response.Data.RandomItemLowerBias().Url : "Sorry, I couldn't find a gif for that.");
-                        }
-                    }
-                }
-                catch
-                {
-                    Uri uri = new Uri($"{giphyUrl}random?rating=pg-13&{key}");
-
-                    var response = await new ApiHandler<GiphySingleResult>().GetJSONAsync(uri);
-                    if (response?.Data != null)
-                    {
-                        await context.Channel.SendMessageAsync(response.Data.Url);
-                    }
-                }
-                return true;
-
             }
             else if (Validation.CheckCommand(message, "xkcd"))
             {

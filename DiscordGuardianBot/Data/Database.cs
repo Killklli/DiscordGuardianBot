@@ -36,6 +36,11 @@ namespace DiscordGuardianBot
     {
         public string File { get; set; }
     }
+    public class CatFact
+    {
+        public string Fact { get; set; }
+        public int Length { get; set; }
+    }
     public class UserData
     {
         /// <summary>
