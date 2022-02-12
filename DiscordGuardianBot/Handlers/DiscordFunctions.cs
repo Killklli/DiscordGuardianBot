@@ -262,6 +262,7 @@ namespace DiscordGuardianBot
         /// </summary>
         public static async Task CreateVoiceChannel(CommandContext Context, string VoChannel, [Optional]List<Permissions> Roles, [Optional]string Category, [Optional]int? Position)
         {
+            await Task.Delay(1000);
             // Get the list of channels
             IReadOnlyCollection<IGuildChannel> channels = await Context.Guild.GetVoiceChannelsAsync();
             // Check if the channel exists
@@ -372,6 +373,7 @@ namespace DiscordGuardianBot
         /// </summary>
         public static async Task CreateChannel(CommandContext Context, string Channel, [Optional]List<Permissions> Roles, [Optional]string Description, [Optional]string Category, [Optional]int? Position)
         {
+            await Task.Delay(1000);
             // Get the list of channels
             IReadOnlyCollection<IGuildChannel> channels = await Context.Guild.GetChannelsAsync();
             // Check if the channel exists
@@ -379,13 +381,17 @@ namespace DiscordGuardianBot
             Discord.ITextChannel newchannel = null;
             foreach (var channelname in channels)
             {
-                if (channelname.Name.ToString().ToLower().Trim() == Channel.ToString().ToLower().Trim())
+                try
                 {
-                    // If the channel exists exit
-                    exists = true;
-                    newchannel = channelname as ITextChannel;
-                    break;
+                    if (channelname.Name.ToString().ToLower().Trim() == Channel.ToString().ToLower().Trim())
+                    {
+                        // If the channel exists exit
+                        exists = true;
+                        newchannel = channelname as ITextChannel;
+                        break;
+                    }
                 }
+                catch { }
             }
             if (exists == false)
             {

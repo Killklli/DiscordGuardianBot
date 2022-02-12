@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <StartupObject>DiscordGuardianBot.Program</StartupObject>
     <AssemblyName>DiscordGuardianBot</AssemblyName>
     <RootNamespace>DiscordGuardianBot</RootNamespace>
@@ -18,7 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AIMLBot" Version="2.0.0" />
     <PackageReference Include="Discord.Net" Version="2.1.1" />
     <PackageReference Include="Google.Apis" Version="1.42.0" />
     <PackageReference Include="Google.Apis.Docs.v1" Version="1.42.0.1797" />

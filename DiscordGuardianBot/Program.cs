@@ -10,7 +10,6 @@ using Discord.Commands;
 using Discord.WebSocket;
 using LiteDB;
 using Newtonsoft.Json;
-using AIMLbot;
 using Victoria;
 using Microsoft.Extensions.DependencyInjection;
 using Victoria.EventArgs;
@@ -28,9 +27,6 @@ namespace DiscordGuardianBot
         private static Config creds = new Config();
         // Set Global regex for emojis
         private static readonly Regex reg = new Regex(@"<:[^:\s]*(?:::[^:\s]*)*:[^:\s]*(?:[^:\s]*)>");
-
-        private static readonly Bot AI = new Bot();
-        private static readonly AIMLbot.User myUser = new AIMLbot.User("AngelaLansbury", AI);
 
         private LavaNode _lavaNode;
         private ServiceProvider _services;
@@ -110,11 +106,6 @@ namespace DiscordGuardianBot
                 // Index document using a document property
                 Guardians.EnsureIndex(x => x.DiscordUsername);
             }
-            AI.UpdatedConfigDirectory = "./config";
-            AI.UpdatedAimlDirectory = "./aiml";
-            AI.loadSettings();
-            AI.loadAIMLFromFiles();
-            AI.isAcceptingUserInput = true;
 
             // Initalize the client
             _services = ConfigureServices();
@@ -394,21 +385,6 @@ namespace DiscordGuardianBot
                             {
                                 // If so send a gif
                                 await context.Channel.SendMessageAsync(Angela.RandomAngela());
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    // Send request
-                                    Request r = new Request(message.Content.Replace("<@!503445217530085396>", "").Trim(), myUser, AI);
-
-                                    // Save answer
-                                    Result res = AI.Chat(r);
-                                    // Output answer
-                                    await message.Channel.SendMessageAsync(res.Output);
-                                }
-                                catch { }
-
                             }
                         }
                         // Log all text

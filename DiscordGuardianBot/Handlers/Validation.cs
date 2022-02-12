@@ -31,7 +31,6 @@ namespace DiscordGuardianBot
                     TwitterOauthSecret = "0000000",
                     TwitterAccessSecret = "000000000",
                     TwitterAccessToken = "00000000",
-                    Giphy = "0000000",
                     GroupMe = "00000000",
                     DocsID = "0000000000"
                 };
