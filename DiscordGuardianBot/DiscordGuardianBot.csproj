@@ -23,7 +23,7 @@
     <PackageReference Include="Google.Apis.Docs.v1" Version="1.42.0.1797" />
     <PackageReference Include="Google.Apis.Sheets.v4" Version="1.42.0.1791" />
     <PackageReference Include="LiteDB" Version="4.1.4" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 
   <ItemGroup>
